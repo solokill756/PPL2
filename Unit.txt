@@ -1,0 +1,8 @@
+|   Mã đơn vị   |   Tên đơn vị tính  |
+	1           :    kg
+	2           :    bag
+	3           :    cm
+	4           :    mm
+	5           :    dm
+	6           :    tan
+	8           :    mm
