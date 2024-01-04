@@ -168,18 +168,18 @@ istream &operator>>(istream &i, Supplies &su)
 
 long long Supplies::GetTotalCost()
 {
-    double sl = double(this->amount);
-    if (sl > 200)
+    // double sl = double(this->amount);
+    if (this->amount > 200)
     {
-        return sl * this->supplies_price * 0.75;
+        return this->amount * (this->supplies_price * 85 / 100);
     }
-    else if (sl > 100 && sl <= 200)
+    else if (this->amount > 100 && this->amount <= 200)
     {
-        return sl * this->supplies_price * 0.9;
+        return this->amount * (this->supplies_price * 90 / 100);
     }
     else
     {
-        return sl * this->supplies_price;
+        return this->amount * this->supplies_price;
     }
 }
 

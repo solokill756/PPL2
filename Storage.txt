@@ -1,8 +1,8 @@
 |   Mã vật tư   |   Tên vật tư  |  Mã Loại vật tư |    Số lượng     |   Đơn giá | Mã đơn vị |
-    S03         , KEM           , XD02            , 260             , 10000     , 2       
-    S01         , PPL           , XD04            , 190             , 1000      , 3       
     SO5         , SAT           , XD02            , 1000            , 10000     , 2       
-    S02         , SAT           , XD01            , 185             , 1000      , 1       
-    S04         , THAO          , sss             , 70              , 10000     , 5       
-    S05         , VANG          , XD03            , 40              , 10000     , 2       
-    S06         , THANH         , XD04            , 565             , 100000    , 6       
+    S02         , SAT           , XD01            , 370             , 1000      , 1       
+    S05         , VANG          , XD03            , 130             , 10000     , 2       
+    S06         , THANH         , XD04            , 1130            , 100000    , 6       
+    S03         , DONG          , XD04            , 52              , 200       , 2       
+    S01         , TITANIUM      , sss             , 38              , 1000      , 1       
+    S04         , CROM          , XD03            , 24              , 2000      , 3       

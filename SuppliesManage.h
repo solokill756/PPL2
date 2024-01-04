@@ -32,7 +32,6 @@ class SuppliesManage
         void deleteSupplies100(); // xóa vật tư có số lượng hơn 100
         // sắp xếp theo thứ tự ??
         void SortStorage(const int& , const int& , int , int); // Sắp xếp lại kho
-        void SortEntryDate(int , int); // Sắp xếp EntryDate theo chiều tăng dần
         void InsertStorage(Supplies , int , const int&); // chèm vật tư vào kho
         void show(); //Loại vật tư | Số lượng | Tổng tiền
         void FindSupplies(); // Tìm kiếm ?

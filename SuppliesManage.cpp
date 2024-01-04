@@ -294,37 +294,6 @@ void SuppliesManage::input()
     this->addTestEnDate(S);
 }
 
-// Ham nay can fix lai !!!
-void SuppliesManage::SortEntryDate(int l, int r)
-{
-    int i = l, j = r;
-    EntryDate p = this->ed[(l + r) / 2];
-    EntryDate temp;
-    while (i < j)
-    {
-        while (Functions::conpare(this->ed[i].getTime(), p.getTime()) == 2)
-            i++;
-        while (Functions::conpare(this->ed[j].getTime(), p.getTime()) == 1)
-            j--;
-        if (i <= j)
-        {
-            // cout << this->ed[j].getTime() << " " << this->ed[i].getTime() << endl;
-            temp = this->ed[i];
-            this->ed[i] = this->ed[j];
-            this->ed[j] = temp;
-            // cout << temp.getTime() << endl;
-            //  cout << this->ed[j].getTime() << " " << this->ed[i].getTime() << endl;
-            i++;
-            j--;
-            // cout << endl;
-        }
-    }
-    if (i < r)
-        this->SortEntryDate(i, r);
-    if (j > l)
-        this->SortEntryDate(l, j);
-}
-
 void SuppliesManage::currentStorage()
 {
     Vector<string> S;
