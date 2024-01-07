@@ -56,8 +56,17 @@ int main() {
             Case5(s);
             break;
         case 6:
+            if(checkStorage(s)) {
+                Functions::gotoxy(75 , Functions::getY() + 1); cout << "Kho dang rong xin moi ban quay lai sao !" << '\n';
+                Functions::gotoxy(75 , Functions::getY() + 1); system("pause");
+                system("cls");
+                break;
+            }
+            Case26(s);
+            break;
+        case 7:
             system("cls");
-            exit(0);  
+            exit(0);
         default:
             Functions::gotoxy(5, 50); std::cout << "Lua chon ban nhap khong hop le" << '\n';
             Functions::gotoxy(5, 51); system("pause");

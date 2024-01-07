@@ -1,6 +1,6 @@
 |   Mã đơn vị   |   Tên đơn vị tính  |
-	1           :    kg
-	2           :    bag
+	1           :    CM
+	2           :    tui
 	3           :    cm
 	4           :    mm
 	5           :    dm

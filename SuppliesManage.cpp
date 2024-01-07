@@ -2,8 +2,9 @@
 
 SuppliesManage::SuppliesManage()
 {
+    this->PutKOSupply();
+    this->putUnit();
     this->PutMark();
-    this->currentStorage();
     this->currentEntryDate();
 }
 
@@ -11,39 +12,17 @@ SuppliesManage::~SuppliesManage()
 {
 }
 
-int SuppliesManage::checkSupplies(string &yourChoice)
+Storage& SuppliesManage::getStorage()
 {
-    Functions::gotoxy(75, 3); cout << "Cac ma Vat Tu trong kho la : ";
-    Functions::gotoxy(75, 4); cout << "|| ";
-    for (int i = 0; i < this->sups.getSize(); ++i)
-    {
-        cout << this->sups[i].getSuppliesCode() << " || ";
-    }
-    Functions::gotoxy(75, 6); cout << "Lua chon cua ban : ";
-    int pos = -1;
-    while (pos == -1)
-    {
-        cin >> yourChoice;
-        for (int i = 0; i < this->sups.getSize(); ++i)
-        {
-            if (yourChoice == this->sups[i].getSuppliesCode())
-            {
-                pos = i;
-                break;
-            }
-        }
-        if (pos == -1)
-        {
-            Functions::gotoxy(75, 9); cout << "                                                                                                        ";
-            Functions::gotoxy(75, 8); cout << "Ma ban vua nhap khong co trong kho de thuc hien chuc nang ma ban vua chon!!!" << '\n';
-            Functions::gotoxy(75, 9); cout << "Vui long nhap lai dung voi nhung ma Vat Tu chung toi dua ra : ";
-        }
-    }
-    return pos;
+    return this->kho;
 }
 
 void SuppliesManage::PutMark()
 {
+    Manufacturer temp;
+    int SizeMF;
+    string MarkMF[N + 1];
+    string NameMF[N + 1];
     int n, p;
     ifstream fileInput;
     string s;
@@ -82,13 +61,122 @@ void SuppliesManage::PutMark()
     }
     fileInput.close();
     SizeMF = p;
+    for(int i = 0; i < SizeMF; i++)
+    {
+        temp.setManufacturer(MarkMF[i]);
+        temp.setNameMF(NameMF[i]);
+        mf.push_back(temp);
+    }
+}
+
+void SuppliesManage::putUnit() {
+    unit temp;
+    int SizeMF;
+    string MarkMF[N + 1];
+    string NameMF[N + 1];
+    int n, p;
+    ifstream fileInput;
+    string s;
+    // Lay du lieu tu file Manufacturers.txt
+    fileInput.open("Unit.txt", ios::in);
+    n = 0;
+    p = 0;
+    while (getline(fileInput, s))
+    {
+        if (n == 0)
+        {
+            n++;
+            continue;
+        }
+        int i = 0;
+        while (i < s.size())
+        {
+            string st = "";
+            int j = i;
+            while (s[j] != ':' && j < s.size())
+            {
+                // if(s[j] != ' ') {  Tai sao van bi dinh dau cach khi dung cau lenh nay
+                if ((s[j] >= '0' && s[j] <= '9') || (s[j] >= 'a' && s[j] <= 'z') || (s[j] >= 'A' && s[j] <= 'Z'))
+                {
+                    st = st + s[j];
+                }
+                j++;
+            }
+            if (j < s.size())
+                MarkMF[p] = st;
+            else
+                NameMF[p] = st;
+            i = j + 1;
+        }
+        p++;
+    }
+    fileInput.close();
+    SizeMF = p;
+    for(int i = 0; i < SizeMF; i++)
+    {
+        temp.setSuppliesUnit(MarkMF[i]);
+        temp.setNameUnit(NameMF[i]);
+        un.push_back(temp);
+    }
+}
+
+void SuppliesManage::PutKOSupply()
+{
+    KOsupply temp;
+    int SizeMF;
+    string MarkMF[N + 1];
+    string NameMF[N + 1];
+    int n, p;
+    ifstream fileInput;
+    string s;
+    // Lay du lieu tu file Manufacturers.txt
+    fileInput.open("Supplies.txt", ios::in);
+    n = 0;
+    p = 0;
+    while (getline(fileInput, s))
+    {
+        if (n == 0)
+        {
+            n++;
+            continue;
+        }
+        int i = 0;
+        while (i < s.size())
+        {
+            string st = "";
+            int j = i;
+            while (s[j] != ':' && j < s.size())
+            {
+                // if(s[j] != ' ') {  Tai sao van bi dinh dau cach khi dung cau lenh nay
+                if ((s[j] >= '0' && s[j] <= '9') || (s[j] >= 'a' && s[j] <= 'z') || (s[j] >= 'A' && s[j] <= 'Z'))
+                {
+                    st = st + s[j];
+                }
+                j++;
+            }
+            if (j < s.size())
+                MarkMF[p] = st;
+            else
+                NameMF[p] = st;
+            i = j + 1;
+        }
+        p++;
+    }
+    fileInput.close();
+    SizeMF = p;
+    for(int i = 0; i < SizeMF; i++)
+    {
+        temp.setSuppliesCode(MarkMF[i]);
+        temp.setNameSup(NameMF[i]);
+        ko.push_back(temp);
+    }
 }
 
 void SuppliesManage::addMarkUnit() {
     string markUnit , nameUnit;
     Functions::gotoxy(75 , 3); cout << "Moi ban nhap ki hieu don vi moi : ";
     cin >> markUnit;
-    while(Functions::getUnitOfSupps(markUnit) != "") {
+    while(this->getUnitOfSupps(markUnit) != "") {
         Functions::gotoxy(75 , 5); cout << "                                                                                           ";
         Functions::gotoxy(75 , 5); cout << "Ma ban nhap da co san , moi ban nhap lai : "; 
         cin >> markUnit;
@@ -105,7 +193,7 @@ void SuppliesManage::addMarkTypeOFSupp() {
     string markTypeOFSup , nameTypeOFSup;
     Functions::gotoxy(75 , 3); cout << "Moi ban nhap ki hieu loai vat tu moi : ";
     cin >> markTypeOFSup;
-    while(Functions::getKindOfSupps(markTypeOFSup) != "") {
+    while(this->getKindOfSupps(markTypeOFSup) != "") {
         Functions::gotoxy(75 , 5); cout << "                                                                                           ";
         Functions::gotoxy(75 , 5); cout << "Ma ban nhap da co san , moi ban nhap lai : "; 
         cin >> markTypeOFSup;
@@ -119,37 +207,26 @@ void SuppliesManage::addMarkTypeOFSupp() {
 }
 
 void SuppliesManage::addMarkMK() {
-    this->SizeMF++;
+    Manufacturer temp;
     int check = 0;
     string s1 , s2;
     int i = 0;
     Functions::gotoxy(75 , 5); cout << "Moi ban nhap ki hieu nha san xuat moi : ";
     cin >> s1;
-    while(Functions::getManufacturers(s1) != "") {
+    while(this->getManufacturers(s1) != "") {
         Functions::gotoxy(75 , 7); cout << "                                                                                           ";
         Functions::gotoxy(75 , 7); cout << "Ki hieu ban nhap da co san , moi ban nhap lai : "; 
         cin >> s1;
     }
     Functions::gotoxy(75 , 9); cout << "Moi ban nhap ten nha san xuat moi : ";
     cin >> s2;
-    this->MarkMF[this->SizeMF - 1] = s1;
-    this->NameMF[this->SizeMF - 1] = s2;
+    temp.setManufacturer(s1);
+    temp.setNameMF(s2);
+    mf.push_back(temp);
     ofstream fileOut;
     fileOut.open("Manufacturers.txt" , ios::app);
     fileOut << "\t" << left << setw(12) << s1 << ":" << "   " << s2 << '\n';
     fileOut.close();
-}
-void SuppliesManage::addSups(Supplies s)
-{
-    for (int i = 0; i < this->sups.getSize(); ++i)
-    {
-        if (this->sups[i].getSuppliesCode() == s.getSuppliesCode())
-        {
-            this->sups[i].setAmount(this->sups[i].getAmount() + s.getAmount());
-            return;
-        }
-    }
-    this->sups.push_back(s);
 }
 
 void SuppliesManage::addEd(EntryDate e)
@@ -180,7 +257,7 @@ void SuppliesManage::addEd(EntryDate e)
 
 Vector<Supplies> &SuppliesManage::getSups()
 {
-    return this->sups;
+    return this->kho.getSups();
 }
 
 Vector<EntryDate> &SuppliesManage::getEd()
@@ -294,66 +371,6 @@ void SuppliesManage::input()
     this->addTestEnDate(S);
 }
 
-void SuppliesManage::currentStorage()
-{
-    Vector<string> S;
-    string s;
-    int n = 0;
-    ifstream inputFile("Storage.txt");
-    while (getline(inputFile, s))
-    {
-        if (n != 0)
-        {
-            int i = 0;
-            int check = 1;
-            Supplies su;
-            while (i < s.size())
-            {
-                int p = i;
-                string st = "";
-                while (p < s.size() && s[p] != ',')
-                {
-                    if (s[p] != ' ')
-                        st = st + s[p];
-                    p++;
-                }
-                switch (check)
-                {
-                case 1:
-                    su.setSuppliesCode(st);
-                    check++;
-                    break;
-                case 2:
-                    su.setSuppliesName(st);
-                    check++;
-                    break;
-                case 3:
-                    su.setKOSupplies(st);
-                    check++;
-                    break;
-                case 4:
-                    su.setAmount(Functions::Change(st));
-                    check++;
-                    break;
-                case 5:
-                    su.setSuppliesPrice(Functions::Change(st));
-                    check++;
-                    break;
-                case 6:
-                    su.setSuppliesUnit(st);
-                    check++;
-                    break;
-                default:
-                    break;
-                }
-                i = p + 1;
-            }
-            (*this).addSups(su);
-        }
-        n++;
-    }
-    inputFile.close();
-}
 
 void SuppliesManage::updateListEd()
 {
@@ -378,26 +395,6 @@ void SuppliesManage::updateListEd()
     outFile.close();
     if (outFile.is_open())
         outFile.close();
-}
-
-void SuppliesManage::updateStorage()
-{
-    ofstream outFile1;
-    outFile1.open("Storage.txt", ios::trunc);
-    outFile1 << "|   Mã vật tư   |   Tên vật tư  |  Mã Loại vật tư |    Số lượng     |   Đơn giá | Mã đơn vị |" << '\n';
-    for (int i = 0; i < this->sups.getSize(); ++i)
-    {
-        outFile1 << "    " << setw(11) << left << this->sups[i].getSuppliesCode() << " , ";
-        outFile1 << setw(13) << left << this->sups[i].getSuppliesName() << " , ";
-        outFile1 << setw(15) << left << this->sups[i].getKOSupplies() << " , ";
-        outFile1 << setw(15) << left << this->sups[i].getAmount() << " , ";
-        outFile1 << setw(9) << left << this->sups[i].getSuppliesPrice() << " , ";
-        outFile1 << setw(8) << left << this->sups[i].getSuppliesUnit();
-        outFile1 << '\n';
-    }
-    outFile1.close();
-    if (outFile1.is_open())
-        outFile1.close();
 }
 
 void SuppliesManage::addNewData()
@@ -433,12 +430,12 @@ void SuppliesManage::addNewData()
                     break;
                 case 1:
                     count = 0;
-                    for (int j = 0; j < this->sups.getSize(); ++j)
-                        if (this->sups[j].getSuppliesCode() == st)
+                    for (int j = 0; j < this->kho.getSups().getSize(); ++j)
+                        if (this->kho.getSups()[j].getSuppliesCode() == st)
                             break;
                         else
                             count++;
-                    if (count == this->sups.getSize())
+                    if (count == this->kho.getSups().getSize())
                         New = 1;
                     su.setSuppliesCode(st);
                     check++;
@@ -460,22 +457,22 @@ void SuppliesManage::addNewData()
                 Functions::gotoxy(75, 3); cout << "Ban da them ma vat tu moi khong co trong kho , moi ban them thong tin ve vat tu " << su.getSuppliesCode() << '!';
                 cin >> su;
             }
-            (*this).addSups(su);
+            (*this).kho.addSups(su);
         }
         n++;
     }
     inputFile3.close();
-    this->updateStorage();
+    this->kho.updateStorage();
     this->updateListEd();
 }
 
 void SuppliesManage::deleteSupplies(string st)
 {
-    this->checkSupplies(st);
-    for (int i = 0; i < this->sups.getSize(); ++i)
-        if (this->sups[i].getSuppliesCode() == st)
+    this->kho.checkSupplies(st);
+    for (int i = 0; i < this->kho.getSups().getSize(); ++i)
+        if (this->kho.getSups()[i].getSuppliesCode() == st)
         {
-            this->sups.erase(i);
+            this->kho.getSups().erase(i);
             break;
         }
     for (int i = 0; i < this->ed.getSize(); ++i)
@@ -520,7 +517,7 @@ void SuppliesManage::deleteSupplies(string st)
         if (size == 0 || i != 0)
             check = 0;
     } while (check == 1);
-    this->updateStorage();
+    this->kho.updateStorage();
     this->updateListEd();
 }
 
@@ -530,10 +527,10 @@ void SuppliesManage::deleteSupplies100()
     int check = 0;
     do
     {
-        int size = this->sups.getSize();
+        int size = this->kho.getSups().getSize();
         while (i < size)
         {
-            if (this->sups[i].getAmount() > 100)
+            if (this->kho.getSups()[i].getAmount() > 100)
             {
                 // cout << sups[i].getSuppliesCode() << '\n';
                 for (int j = 0; j < this->ed.getSize(); ++j)
@@ -545,7 +542,7 @@ void SuppliesManage::deleteSupplies100()
                         int sizek = this->ed[j].getSup().getSize();
                         while (k < sizek)
                         {
-                            if (this->sups[i].getSuppliesCode() == this->ed[j].getSup()[k].getSuppliesCode())
+                            if (this->kho.getSups()[i].getSuppliesCode() == this->ed[j].getSup()[k].getSuppliesCode())
                             {
                                 checkk = 1;
                                 k = 0;
@@ -578,7 +575,7 @@ void SuppliesManage::deleteSupplies100()
                         checkj = 0;
                 } while (checkj == 1);
                 check = 1;
-                this->sups.erase(i);
+                this->kho.getSups().erase(i);
                 i = 0;
                 break;
             }
@@ -588,35 +585,54 @@ void SuppliesManage::deleteSupplies100()
             check = 0;
 
     } while (check == 1);
-    this->updateStorage();
+    this->kho.updateStorage();
     this->updateListEd();
 }
 
 void SuppliesManage::FindSupplies()
 {
     string yourChoice;
-    int pos = this->checkSupplies(yourChoice);
+    int pos = this->kho.checkSupplies(yourChoice);
     Functions::gotoxy(75, 12); cout << "Duoi day la cac thong tin ve Vat Tu " << yourChoice << " !!!";
     Functions::gotoxy(75, 14); cout << "Ma Vat Tu   : " << yourChoice << endl;
-    Functions::gotoxy(75, 16); cout << "Ten Vat Tu  : " << sups[pos].getSuppliesName() << endl;
-    string str = this->sups[pos].getKOSupplies();
-    Functions::gotoxy(75, 18); cout << "Loai Vat Tu : " << Functions::getKindOfSupps(this->sups[pos].getKOSupplies()) << endl;
-    Functions::gotoxy(75, 20); cout << "So luong    : " << sups[pos].getAmount() << endl;
-    Functions::gotoxy(75, 22); cout << "Gia         : " << sups[pos].getSuppliesPrice() << endl;
-    Functions::gotoxy(75, 24); cout << "Don vi      : " << Functions::getUnitOfSupps(this->sups[pos].getSuppliesUnit()) << endl;
+    Functions::gotoxy(75, 16); cout << "Ten Vat Tu  : " << kho.getSups()[pos].getSuppliesName() << endl;
+    string str = this->kho.getSups()[pos].getKOSupplies();
+    Functions::gotoxy(75, 18); cout << "Loai Vat Tu : " << this->getKindOfSupps(this->kho.getSups()[pos].getKOSupplies()) << endl;
+    Functions::gotoxy(75, 20); cout << "So luong    : " << kho.getSups()[pos].getAmount() << endl;
+    Functions::gotoxy(75, 22); cout << "Gia         : " << kho.getSups()[pos].getSuppliesPrice() << endl;
+    Functions::gotoxy(75, 24); cout << "Don vi      : " << this->getUnitOfSupps(this->kho.getSups()[pos].getSuppliesUnit()) << endl;
     Functions::gotoxy(75, 26); cout << "Cac nha san xuat cung cap vat tu " << yourChoice << " la : ";
+    Vector<string> tmp;
+    string s;
+    int lap = 0;
+    int count = 0;
     for(int i = 0 ; i < this->ed.getSize() ; ++i) {
         for(int j = 0 ; j < this->ed[i].getSup().getSize() ; ++j) {
             int check = 0;
-            int count = 0;
             if(this->ed[i].getSup()[j].getSuppliesCode() == yourChoice) {
-                for(int k = 0 ; k < this->SizeMF ; ++k)
-                    if(this->ed[i].getSup()[k].getSuppliesMa() == this->MarkMF[k]) {
-                        if(count == 0) cout << this->NameMF[k];
-                        else cout << "    ,    " << this->NameMF[k];
-                        check = 1;
-                        count++;
-                        break;
+                for(int k = 0 ; k < mf.getSize() ; ++k)
+                    if(this->ed[i].getSup()[k].getSuppliesMa() == mf[k].getManufacturer()) {
+                        s = this->ed[i].getSup()[k].getSuppliesMa();
+                        for(int l = 0; l < tmp.getSize(); l++)
+                        { 
+                            if(tmp[l] == s) {
+                                lap = 1;
+                                break;
+                            }
+                        }
+                        if(lap == 1) {
+                            lap = 0;
+                            break;
+                        }
+                        else 
+                        {
+                            tmp.push_back(mf[k].getManufacturer());
+                            if(count == 0) cout << mf[k].getNameMF();
+                            else cout << ", " << mf[k].getNameMF();
+                            check = 1;
+                            count++;
+                            break;
+                        }
                     }
             }
             if(check == 1) break;
@@ -625,127 +641,18 @@ void SuppliesManage::FindSupplies()
     Functions::gotoxy(75, 28);
 }
 
-void SuppliesManage::SortStorage(const int &x, const int &y, int l, int r)
-{
-    int i = l, j = r;
-    Supplies p = this->sups[(l + r) / 2];
-    while (i < j)
-    {
-        switch (x)
-        {
-        case 1:
-            if (y == 1)
-            {
-                while (Functions::compareString(this->sups[i].getSuppliesCode(), p.getSuppliesCode()) == 2)
-                    i++;
-                while (Functions::compareString(this->sups[j].getSuppliesCode(), p.getSuppliesCode()) == 1)
-                    j--;
-            }
-            else if (y == 2)
-            {
-                while (Functions::compareString(this->sups[i].getSuppliesCode(), p.getSuppliesCode()) == 1)
-                    i++;
-                while (Functions::compareString(this->sups[j].getSuppliesCode(), p.getSuppliesCode()) == 2)
-                    j--;
-            }
-            break;
-        case 2:
-            if (y == 1)
-            {
-                while (Functions::compareString(this->sups[i].getSuppliesName(), p.getSuppliesName()) == 2)
-                    i++;
-                while (Functions::compareString(this->sups[j].getSuppliesName(), p.getSuppliesName()) == 1)
-                    j--;
-            }
-            else if (y == 2)
-            {
-                while (Functions::compareString(this->sups[i].getSuppliesName(), p.getSuppliesName()) == 1)
-                    i++;
-                while (Functions::compareString(this->sups[j].getSuppliesName(), p.getSuppliesName()) == 2)
-                    j--;
-            }
-            break;
-        case 3:
-            if (y == 1)
-            {
-                while (Functions::compareString(this->sups[i].getKOSupplies(), p.getKOSupplies()) == 2)
-                    i++;
-                while (Functions::compareString(this->sups[j].getKOSupplies(), p.getKOSupplies()) == 1)
-                    j--;
-            }
-            else if (y == 2)
-            {
-                while (Functions::compareString(this->sups[i].getKOSupplies(), p.getKOSupplies()) == 1)
-                    i++;
-                while (Functions::compareString(this->sups[j].getKOSupplies(), p.getKOSupplies()) == 2)
-                    j--;
-            }
-            break;
-        case 4:
-            if (y == 1)
-            {
-                while (this->sups[i].getAmount() < p.getAmount())
-                    i++;
-                while (this->sups[j].getAmount() > p.getAmount())
-                    j--;
-            }
-            else if (y == 2)
-            {
-                while (this->sups[i].getAmount() > p.getAmount())
-                    i++;
-                while (this->sups[j].getAmount() < p.getAmount())
-                    j--;
-            }
-            break;
-        case 5:
-            if (y == 1)
-            {
-                while (this->sups[i].getSuppliesPrice() < p.getSuppliesPrice())
-                    i++;
-                while (this->sups[j].getSuppliesPrice() > p.getSuppliesPrice())
-                    j--;
-            }
-            else if (y == 2)
-            {
-                while (this->sups[i].getSuppliesPrice() > p.getSuppliesPrice())
-                    i++;
-                while (this->sups[j].getSuppliesPrice() < p.getSuppliesPrice())
-                    j--;
-            }
-            break;
-        default:
-            break;
-        }
-        if (i <= j)
-        {
-            // cout << i << " " << j << '\n';
-            Supplies temp = this->sups[i];
-            this->sups[i] = this->sups[j];
-            this->sups[j] = temp;
-            i++;
-            j--;
-        }
-    }
-    if (i < r)
-    {
-        this->SortStorage(x, y, i, r);
-    }
-    if (l < j)
-    {
-        this->SortStorage(x, y, l, j);
-    }
-}
+
 
 void SuppliesManage::InsertStorage(Supplies su, int index, const int &x)
 {   
     int currentX;
     int currentY = Functions::getY() + 1;
-    while (index < 0 || index > this->sups.getSize())
+    while (index < 0 || index > this->kho.getSups().getSize())
     {
         Functions::gotoxy(75, currentY++); cout << "Ban da them vao vi tri qua do dai trong kho moi ban nhap lai : ";
         cin >> index;
     }
-    this->sups.insert(su, index);
+    this->kho.getSups().insert(su, index);
     time_t time_now = time(NULL);
     struct tm *time_info = localtime(&time_now);             // Chuyển time_t sang struct tm.
     char buffer[80];                                         // Chuỗi ký tự để chứa ngày đã định dạng.
@@ -771,9 +678,9 @@ void SuppliesManage::InsertStorage(Supplies su, int index, const int &x)
         Functions::gotoxy(75, currentY++); cout << " - Nhap phim 2 neu muon giam dan";
         Functions::gotoxy(75, currentY++); cout << "Moi ban nhap : ";
         cin >> z; // Code giao diện để người dùng muốn sort theo kiểu nào
-        this->SortStorage(y, z, 0, this->sups.getSize() - 1);
+        this->kho.SortStorage(y, z, 0, this->kho.getSups().getSize() - 1);
     }
-    this->updateStorage();
+    this->kho.updateStorage();
     this->updateListEd();
 }
 
@@ -782,22 +689,22 @@ void SuppliesManage::show()
     // in ra terminal
     int pos = 4;
     Functions::gotoxy(75, 3); cout << "|  Ma Vat Tu     |	 So Luong	  |	  Tong Tien	  |";
-    for (int i = 0; i < this->sups.getSize(); ++i)
+    for (int i = 0; i < this->kho.getSups().getSize(); ++i)
     {
         Functions::gotoxy(75, pos++);
-        cout << "     " << setw(12) << left << this->sups[i].getSuppliesCode();
-        cout << "|       " << setw(14) << left << this->sups[i].getAmount();
-        cout << "|	   " << this->sups[i].GetTotalCost();
+        cout << "     " << setw(12) << left << this->kho.getSups()[i].getSuppliesCode();
+        cout << "|       " << setw(14) << left << this->kho.getSups()[i].getAmount();
+        cout << "|	   " << this->kho.getSups()[i].GetTotalCost();
     }
     Functions::gotoxy(75, pos++ + 5);
     ofstream fileOut;
     fileOut.open("Result.txt", ios::trunc);
     fileOut << "|  Mã vật tư	     |	Số lượng	  |	  Tổng tiền	  |" << '\n';
-    for (int i = 0; i < this->sups.getSize(); ++i)
+    for (int i = 0; i < this->kho.getSups().getSize(); ++i)
     {
-        fileOut << "   " << setw(13) << left << this->sups[i].getSuppliesCode();
-        fileOut << "		   " << setw(10) << left << this->sups[i].getAmount();
-        fileOut << "	     " << this->sups[i].GetTotalCost() << '\n';
+        fileOut << "   " << setw(13) << left << this->kho.getSups()[i].getSuppliesCode();
+        fileOut << "		   " << setw(10) << left << this->kho.getSups()[i].getAmount();
+        fileOut << "	     " << this->kho.getSups()[i].GetTotalCost() << '\n';
     }
     fileOut.close();
 }
@@ -807,16 +714,16 @@ void SuppliesManage::showAll()
     Functions::gotoxy(75, 3); cout << "Bang Vat Tu do CTTNHH2TV THAOTHANH phat trien\n";
     Functions::gotoxy(75, 4); cout << "|   Ma Vat Tu   |   Ten Vat Tu  |   Loai Vat Tu  |    So Luong    |   Don Gia  | Don Vi  |  Tong Tien  |";
     int pos = 5;
-    for (int i = 0; i < this->sups.getSize(); ++i)
+    for (int i = 0; i < this->kho.getSups().getSize(); ++i)
     {
         Functions::gotoxy(75, pos);
-        cout << "|     " << left << setw(10) << this->sups[i].getSuppliesCode() << "|";
-        cout << left << "     " << setw(10) << this->sups[i].getSuppliesName() << "|";
-        cout << left << "" << setw(16) << Functions::getKindOfSupps(this->sups[i].getKOSupplies()) << "|";
-        cout << left << "      " << setw(10) << this->sups[i].getAmount() << "|";
-        cout << "    " << left << setw(8) << this->sups[i].getSuppliesPrice() << "|";
-        cout << "   " << left << setw(6) << Functions::getUnitOfSupps(this->sups[i].getSuppliesUnit()) << "|";
-        cout << "   " << left << setw(10) << this->sups[i].GetTotalCost() << "|";
+        cout << "|     " << left << setw(10) << this->kho.getSups()[i].getSuppliesCode() << "|";
+        cout << left << "     " << setw(10) << this->kho.getSups()[i].getSuppliesName() << "|";
+        cout << left << "" << setw(16) << this->getKindOfSupps(this->kho.getSups()[i].getKOSupplies()) << "|";
+        cout << left << "      " << setw(10) << this->kho.getSups()[i].getAmount() << "|";
+        cout << "    " << left << setw(8) << this->kho.getSups()[i].getSuppliesPrice() << "|";
+        cout << "   " << left << setw(6) << this->getUnitOfSupps(this->kho.getSups()[i].getSuppliesUnit()) << "|";
+        cout << "   " << left << setw(10) << this->kho.getSups()[i].GetTotalCost() << "|";
         pos++;
     }
     Functions::gotoxy(75, pos);
@@ -824,19 +731,19 @@ void SuppliesManage::showAll()
 
 void SuppliesManage::exportSupplies(const string &SuppliesCode, int &amount, const int &p)
 {
-    if (this->sups[p].getAmount() < amount || amount < 0)
+    if (this->kho.getSups()[p].getAmount() < amount || amount < 0)
     {
         int currentY = Functions::getY();
         int currentX = Functions::getX();
-        cout << "Hien tai trong kho vat tu co ma " << this->sups[p].getSuppliesCode() << " Chi co so luong la : " << this->sups[p].getAmount();
-        while (amount > this->sups[p].getAmount())
+        cout << "Hien tai trong kho vat tu co ma " << this->kho.getSups()[p].getSuppliesCode() << " Chi co so luong la : " << this->kho.getSups()[p].getAmount();
+        while (amount > this->kho.getSups()[p].getAmount())
         {
             Functions::gotoxy(currentX, currentY + 1); cout << "                                                                                                        ";
             Functions::gotoxy(currentX, currentY + 1); cout << "Ban da nhap qua so luong cho phep moi ban nhap lai : ";
             cin >> amount;
         }
     }
-    this->sups[p].setAmount(this->sups[p].getAmount() - amount);
+    this->kho.getSups()[p].setAmount(this->kho.getSups()[p].getAmount() - amount);
 }
 
 Vector<EntryDate> SuppliesManage::getExportDate()
@@ -933,19 +840,19 @@ void SuppliesManage::statisticsTypeofSupplies()
 {
     ofstream outFile;
     Vector<Supplies> typeOfSupplies;
-    for (int i = 0; i < this->sups.getSize(); ++i)
+    for (int i = 0; i < this->kho.getSups().getSize(); ++i)
     {
         int check = 0;
         for (int j = 0; j < typeOfSupplies.getSize(); ++j)
-            if (this->sups[i].getKOSupplies() == typeOfSupplies[j].getKOSupplies())
+            if (this->kho.getSups()[i].getKOSupplies() == typeOfSupplies[j].getKOSupplies())
             {
-                typeOfSupplies[j].setAmount(typeOfSupplies[j].getAmount() + this->sups[i].getAmount());
-                typeOfSupplies[j].setSuppliesPrice(typeOfSupplies[j].getSuppliesPrice() + this->sups[i].getSuppliesPrice() * this->sups[i].getAmount());
+                typeOfSupplies[j].setAmount(typeOfSupplies[j].getAmount() + this->kho.getSups()[i].getAmount());
+                typeOfSupplies[j].setSuppliesPrice(typeOfSupplies[j].getSuppliesPrice() + this->kho.getSups()[i].getSuppliesPrice() * this->kho.getSups()[i].getAmount());
                 check = 1;
                 break;
             }
         if (check == 0)
-            typeOfSupplies.push_back(this->sups[i]);
+            typeOfSupplies.push_back(this->kho.getSups()[i]);
     }
     //in ra terminal
     int pst = 4;
@@ -953,7 +860,7 @@ void SuppliesManage::statisticsTypeofSupplies()
     for (int i = 0; i < typeOfSupplies.getSize(); ++i)
     {
         Functions::gotoxy(75, pst++); 
-        cout << left << " " << setw(16) << Functions::getKindOfSupps(typeOfSupplies[i].getKOSupplies()) << " | ";
+        cout << left << " " << setw(16) << this->getKindOfSupps(typeOfSupplies[i].getKOSupplies()) << " | ";
         cout << left << "    " << setw(15) << typeOfSupplies[i].getAmount() << " | ";
         cout << "    " << left << setw(13) << typeOfSupplies[i].getSuppliesPrice();
     }
@@ -964,7 +871,7 @@ void SuppliesManage::statisticsTypeofSupplies()
     outFile << "|  Mã Loại vật tư |    Tổng số lượng     |   Tổng giá tiền  |" << '\n';
     for (int i = 0; i < typeOfSupplies.getSize(); ++i)
     {
-        outFile << left << " " << setw(16) << Functions::getKindOfSupps(typeOfSupplies[i].getKOSupplies()) << " , ";
+        outFile << left << " " << setw(16) << this->getKindOfSupps(typeOfSupplies[i].getKOSupplies()) << " , ";
         outFile << left << "      " << setw(15) << typeOfSupplies[i].getAmount() << " , ";
         outFile << "    " << left << setw(13) << typeOfSupplies[i].getSuppliesPrice() << '\n';
     }
@@ -1007,4 +914,313 @@ void SuppliesManage::showKOSups()
         count++;
     }
     input_file.close();
+}
+
+string SuppliesManage::getKindOfSupps(const string& str)
+{
+    for(int i = 0; i < ko.getSize(); i++)
+    {
+        if(ko[i].getSuppliesCode() == str)
+            return ko[i].getNameSup();
+    }
+    return "";
+}
+
+string SuppliesManage::getUnitOfSupps(const string& str)
+{
+    for(int i = 0; i < un.getSize(); i++)
+    {
+        if(un[i].getSuppliesUnit() == str)
+            return un[i].getNameUnit();
+    }
+    return "";
+}
+
+string SuppliesManage::getManufacturers(const string& str)
+{
+    for(int i = 0; i < mf.getSize(); i++)
+    {
+        if(mf[i].getManufacturer() == str)
+            return mf[i].getNameMF();
+    }
+    return "";
+}
+
+void SuppliesManage::editSup()
+{   
+    Functions::gotoxy(75, 3); cout << "Cac ma vat tu da co trong kho la : ";
+    Functions::gotoxy(75, 4); cout << "|| ";
+    for (int it = 0; it < this->kho.getSups().getSize(); ++it)
+    {
+        cout << this->kho.getSups()[it].getSuppliesCode() << " || ";
+    }
+    string yourChoice;
+    int pos = this->kho.checkSupplies(yourChoice);
+    int currentX = Functions::getX();
+    int currentY = Functions::getY();
+    Functions::gotoxy(75, ++currentY); cout << "Ban muon sua thong tin gi cua vat tu " << this->kho.getSups()[pos].getSuppliesCode() << " : ";
+    Functions::gotoxy(75, ++currentY); cout << "1. Sua ten vat tu";
+    Functions::gotoxy(75, ++currentY); cout << "2. Sua ma loai vat tu";
+    Functions::gotoxy(75, ++currentY); cout << "3. Sua ma loai don vi";
+    int choice = 0;
+    while(choice < 1 || choice > 3) {
+        Functions::gotoxy(75, currentY + 1); cout << "                                                                                                   "; 
+        Functions::gotoxy(75, currentY + 1); cout << "Ban chon: "; cin >> choice;
+    }
+    currentY++;
+    if(choice == 1) {
+        string newName;
+        int check = 0;
+        Functions::gotoxy(75, ++currentY); cout << "Thay doi ten vat tu co ma " << this->kho.getSups()[pos].getSuppliesCode() << " "; 
+        Functions::gotoxy(75, ++currentY); cout << "Moi ban nhap ten moi : "; cin >> newName;
+        while(check == 0)
+        {   
+            for(int i = 0 ; i < this->kho.getSups().getSize() ; ++i) 
+                if(newName != this->kho.getSups()[i].getSuppliesName()) {
+                    check++;
+                }
+            if(check != this->kho.getSups().getSize()) {
+                check = 0;
+                Functions::gotoxy(75, currentY + 2); cout << "                                                                                                        ";
+                Functions::gotoxy(75, currentY + 1); cout << "Ten vat tu ban vua nhap da co san trong kho !";
+                Functions::gotoxy(75, currentY + 2); cout << "Moi ban nhap lai : ";
+                cin >> newName;
+            }
+            else break;
+        }
+        currentY += 3;
+        this->kho.getSups()[pos].setSuppliesName(newName);
+    }
+    if(choice == 2) {
+        string newKO;
+        int check = 0;
+        Functions::gotoxy(75, ++currentY); cout << "Thay doi ma loai vat tu cua vat tu co ma " << this->kho.getSups()[pos].getSuppliesCode() << " "; 
+        Functions::gotoxy(75, ++currentY); cout << "Moi ban nhap ma loai vat tu moi : "; cin >> newKO;
+        while(check == 0)
+        {   
+            for(int i = 0 ; i < this->ko.getSize() ; ++i) 
+                if(newKO != this->ko[i].getSuppliesCode()) {
+                    check++;
+                }
+            if(check != this->ko.getSize()) {
+                break;
+            }
+            else {
+                check = 0;
+                Functions::gotoxy(75, currentY + 2); cout << "                                                                                                        ";
+                Functions::gotoxy(75, currentY + 1); cout << "Ma loai vat tu ban vua nhap khong co trong kho !";
+                Functions::gotoxy(75, currentY + 2); cout << "Moi ban nhap lai : ";
+                cin >> newKO;
+            }
+        }
+        currentY += 3;
+        this->kho.getSups()[pos].setKOSupplies(newKO);
+    }
+    if(choice == 3) {
+        string newUnit;
+        int check = 0;
+        Functions::gotoxy(75, ++currentY); cout << "Thay doi ma loai don vi cua vat tu co ma " << this->kho.getSups()[pos].getSuppliesCode() << " "; 
+        Functions::gotoxy(75, ++currentY); cout << "Moi ban nhap ma loai don vi moi : "; cin >> newUnit;
+        while(check == 0)
+        {   
+            for(int i = 0 ; i < this->un.getSize() ; ++i) 
+                if(newUnit != this->un[i].getSuppliesUnit()) {
+                    check++;
+                }
+            if(check != this->ko.getSize()) {
+                break;
+            }
+            else {
+                check = 0;
+                Functions::gotoxy(75, currentY + 2); cout << "                                                                                                        ";
+                Functions::gotoxy(75, currentY + 1); cout << "Ma loai don vi ban vua nhap khong co trong kho !";
+                Functions::gotoxy(75, currentY + 2); cout << "Moi ban nhap lai : ";
+                cin >> newUnit;
+            }
+        }
+        currentY += 3;
+        this->kho.getSups()[pos].setSuppliesUnit(newUnit);
+    }
+}
+
+void SuppliesManage::editUnit()
+{
+    string newNameU;
+    int check = 0;
+    int pos;
+    Functions::gotoxy(75, 3); cout << "Bang ma don vi da co : ";
+    int currentY = Functions::getY();
+    Functions::gotoxy(75, ++currentY); cout << "| ";
+    for(int i = 0 ; i < this->un.getSize() ; ++i) 
+    {
+        cout << this->un[i].getSuppliesUnit() << " | ";
+    }
+    string yourChoice;
+    Functions::gotoxy(75, currentY + 1); cout << "Ban muon doi ten ma loai don vi : "; cin >> yourChoice;
+    while(check == 0)
+    {
+        for(int i = 0 ; i < this->un.getSize() ; ++i) 
+        {
+            if(yourChoice == this->un[i].getSuppliesUnit()) {
+                check = 1;
+                pos = i;
+                break;
+            }
+        }
+        if(check == 0) {
+            Functions::gotoxy(75, currentY + 1); cout << "                                                                                          ";
+            Functions::gotoxy(75, currentY + 1); cout << "Ban muon doi ten ma loai don vi : "; cin >> yourChoice;
+        }
+    }
+    currentY++;
+    Functions::gotoxy(75, ++currentY); cout << "Thay doi ten don vi cua ma don vi " << this->un[pos].getSuppliesUnit() << " "; 
+    Functions::gotoxy(75, ++currentY); cout << "Moi ban nhap ten don vi moi : "; cin >> newNameU;
+    check = 0;
+    while(check == 0)
+    {   
+        for(int i = 0 ; i < this->un.getSize() ; ++i) 
+            if(newNameU != this->un[i].getNameUnit()) {
+                check++;
+            }
+        if(check != this->un.getSize()) {
+            check = 0;
+            Functions::gotoxy(75, currentY + 2); cout << "                                                                                                        ";
+            Functions::gotoxy(75, currentY + 1); cout << "Ten don vi bi trung vui long nhap lai!";
+            Functions::gotoxy(75, currentY + 2); cout << "Moi ban nhap lai : ";
+            cin >> newNameU;
+        }
+        else {
+            break;
+        }
+    }
+    currentY += 3;
+    this->un[pos].setNameUnit(newNameU);
+    ofstream fileOut;
+    fileOut.open("Unit.txt" , ios::trunc);
+    fileOut << "|   Mã đơn vị   |   Tên đơn vị tính  |" << '\n';
+    for(int i = 0; i < this->un.getSize(); i++) {
+        fileOut << "\t" << left << setw(12) << this->un[i].getSuppliesUnit() << ":" << left << "    " << this->un[i].getNameUnit() << '\n';
+    }
+    fileOut.close();
+}
+
+void SuppliesManage::editManufacturer()
+{
+    string newNameMf;
+    int check = 0;
+    int pos;
+    Functions::gotoxy(75, 3); cout << "Bang ma nha san xuat da co : ";
+    int currentY = Functions::getY();
+    Functions::gotoxy(75, ++currentY); cout << "| ";
+    for(int i = 0 ; i < this->mf.getSize() ; ++i) 
+    {
+        cout << this->mf[i].getManufacturer() << " | ";
+    }
+    string yourChoice;
+    Functions::gotoxy(75, currentY + 1); cout << "Ban muon doi ten ma nha san xuat : "; cin >> yourChoice;
+    while(check == 0)
+    {
+        for(int i = 0 ; i < this->mf.getSize() ; ++i) 
+        {
+            if(yourChoice == this->mf[i].getManufacturer()) {
+                check = 1;
+                pos = i;
+                break;
+            }
+        }
+        if(check == 0) {
+            Functions::gotoxy(75, currentY + 1); cout << "                                                                                          ";
+            Functions::gotoxy(75, currentY + 1); cout << "Ban muon doi ten ma nha san xuat : "; cin >> yourChoice;
+        }
+    }
+    currentY++;
+    Functions::gotoxy(75, ++currentY); cout << "Thay doi ten nha san xuat cua ma nha san xuat " << this->mf[pos].getManufacturer() << " "; 
+    Functions::gotoxy(75, ++currentY); cout << "Moi ban nhap ten nha san xuat moi : "; cin >> newNameMf;
+    check = 0;
+    while(check == 0)
+    {   
+        for(int i = 0 ; i < this->mf.getSize() ; ++i) 
+            if(newNameMf != this->mf[i].getNameMF()) {
+                check++;
+            }
+        if(check != this->mf.getSize()) {
+            check = 0;
+            Functions::gotoxy(75, currentY + 2); cout << "                                                                                                        ";
+            Functions::gotoxy(75, currentY + 1); cout << "Ten nha san xuat bi trung vui long nhap lai!";
+            Functions::gotoxy(75, currentY + 2); cout << "Moi ban nhap lai : ";
+            cin >> newNameMf;
+        }
+        else {
+            break;
+        }
+    }
+    currentY += 3;
+    this->mf[pos].setNameMF(newNameMf);
+    ofstream fileOut;
+    fileOut.open("Manufacturers.txt" , ios::trunc);
+    fileOut << "|	Mã NSX		|	Tên NSX		|" << '\n';
+    for(int i = 0; i < this->mf.getSize(); i++) {
+        fileOut << "\t" << left << setw(12) << this->mf[i].getManufacturer() << ":" << "   " << this->mf[i].getNameMF() << '\n';
+    }
+    fileOut.close();
+}
+void SuppliesManage::editKOsup()
+{
+    string newNameKO;
+    int check = 0;
+    int pos;
+    Functions::gotoxy(75, 3); cout << "Bang ma loai vat tu da co : ";
+    int currentY = Functions::getY();
+    Functions::gotoxy(75, ++currentY); cout << "| ";
+    for(int i = 0 ; i < this->ko.getSize() ; ++i) 
+    {
+        cout << this->ko[i].getSuppliesCode() << " | ";
+    }
+    string yourChoice;
+    Functions::gotoxy(75, currentY + 1); cout << "Ban muon doi ten ma loai vat tu : "; cin >> yourChoice;
+    while(check == 0)
+    {
+        for(int i = 0 ; i < this->ko.getSize() ; ++i) 
+        {
+            if(yourChoice == this->ko[i].getSuppliesCode()) {
+                check = 1;
+                pos = i;
+                break;
+            }
+        }
+        if(check == 0) {
+            Functions::gotoxy(75, currentY + 1); cout << "                                                                                          ";
+            Functions::gotoxy(75, currentY + 1); cout << "Ban muon doi ten ma loai vat tu : "; cin >> yourChoice;
+        }
+    }
+    currentY++;
+    Functions::gotoxy(75, ++currentY); cout << "Thay doi ten loai vat tu cua ma loai vat tu " << this->ko[pos].getSuppliesCode() << " "; 
+    Functions::gotoxy(75, ++currentY); cout << "Moi ban nhap ten loai vat tu moi : "; cin >> newNameKO;
+    check = 0;
+    while(check == 0)
+    {   
+        for(int i = 0 ; i < this->ko.getSize() ; ++i) 
+            if(newNameKO != this->ko[i].getNameSup()) {
+                check++;
+            }
+        if(check != this->ko.getSize()) {
+            check = 0;
+            Functions::gotoxy(75, currentY + 2); cout << "                                                                                                        ";
+            Functions::gotoxy(75, currentY + 1); cout << "Ten loai vat tu bi trung vui long nhap lai!";
+            Functions::gotoxy(75, currentY + 2); cout << "Moi ban nhap lai : ";
+            cin >> newNameKO;
+        }
+        else {
+            break;
+        }
+    }
+    currentY += 3;
+    this->ko[pos].setNameSup(newNameKO);
+    ofstream fileOut;
+    fileOut.open("Supplies.txt" , ios::trunc);
+    fileOut << "|	Loại vật tư	|	Tên loại vật tư		|" << '\n';
+    for(int i = 0; i < this->ko.getSize(); i++) {
+        fileOut << "\t" << left << setw(12) << this->ko[i].getSuppliesCode() << ":" << "   " << this->ko[i].getNameSup() << '\n';
+    }
+    fileOut.close();
 }

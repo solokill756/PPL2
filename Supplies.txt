@@ -1,6 +1,6 @@
 |	Loại vật tư	|	Tên loại vật tư		|
-	XD01        :   BuildingSupply01
+	XD01        :   QUEQE
 	XD02        :   BuildingSupply02
 	XD03        :   Garena
 	XD04        :   VNG
-	sss         :   GOL.D
+	sss         :   GOLD

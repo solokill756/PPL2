@@ -1,6 +1,4 @@
 |  Mã Loại vật tư |    Tổng số lượng     |   Tổng giá tiền  |
- BuildingSupply02 ,       1458            ,     10010000     
- BuildingSupply01 ,       333             ,     1000         
- GOLD             ,       166             ,     10000        
- Garena           ,       102             ,     10000        
- VNG              ,       1017            ,     100000       
+ GOLD             ,       489             ,     14200        
+ Garena           ,       721             ,     4290100      
+ VNG              ,       2663            ,     203200       

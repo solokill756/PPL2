@@ -5,7 +5,7 @@ void Menu()
     Functions::setcolor(3);
     for(int j = 2; j <= 69; j++) 
     {
-        Functions::gotoxy(j, 25); cout << static_cast<char>(205);
+        Functions::gotoxy(j, 28); cout << static_cast<char>(205);
     }
     for(int j = 2; j <= 69; j++) 
     {
@@ -36,7 +36,8 @@ void Menu()
     Functions::gotoxy(5, 14); cout << "3. Xoa vat tu";
     Functions::gotoxy(5, 17); cout << "4. Sap xep vat tu trong kho";
     Functions::gotoxy(5, 20); cout << "5. Tra cuu thong tin cac vat tu trong kho";
-    Functions::gotoxy(5, 23); cout << "6. Thoat";
+    Functions::gotoxy(5, 23); cout << "6. Sua thong tin";
+    Functions::gotoxy(5, 26); cout << "7. Thoat";
     Functions::setcolor(2);
 }
 
@@ -113,17 +114,17 @@ void Case9(SuppliesManage &s)
     currentY = Functions::getY();
     Functions::gotoxy(75, currentY + 1); cout << "Cac ma nha san xuat da co san la : ";
     currentY = Functions::getY() + 1;
-    for (int i = 0; i < s.SizeMF; ++i) 
+    for (int i = 0; i < s.mf.getSize(); ++i) 
     {
-        Functions::gotoxy(75, currentY++); cout << s.MarkMF[i] << "         :        " << s.NameMF[i];
+        Functions::gotoxy(75, currentY++); cout << s.mf[i].getManufacturer() << "         :        " << s.mf[i].getNameMF();
     }
     Functions::gotoxy(75, currentY); cout << "ma nha san xuat : ";
     cin >> manufacturers;
     check = 0;
     currentY = Functions::getY() + 1;
     while(check == 0) {
-        for(int i = 0 ; i < s.SizeMF ; ++i)
-            if(s.MarkMF[i] == manufacturers) {
+        for(int i = 0 ; i < s.mf.getSize() ; ++i)
+            if(s.mf[i].getManufacturer() == manufacturers) {
                 check = 1;
                 break;
             }
@@ -172,8 +173,8 @@ void Case11(SuppliesManage &s)
     Functions::gotoxy(75, 20); cout << " - Nhap phim 2 neu muon giam dan" << '\n';
     Functions::gotoxy(75, 22); cout << "Moi ban nhap : ";
     cin >> z;
-    s.SortStorage(y, z, 0, s.getSups().getSize() - 1);
-    s.updateStorage();
+    s.getStorage().SortStorage(y, z, 0, s.getSups().getSize() - 1);
+    s.getStorage().updateStorage();
     Functions::gotoxy(75, 24); cout << "Thao tac thanh cong!!";
     system("pause");
     system("cls");
@@ -316,8 +317,11 @@ void Case15(SuppliesManage &s)
         }
     }
     outFile.close();
-    s.updateStorage();
+    s.getStorage().updateStorage();
+    int currentY = Functions::getY();
+    Functions::gotoxy(75, currentY + 2);
     cout << "Thao tac thanh cong!!";
+    Functions::gotoxy(75, currentY + 4);
     system("pause");
     system("cls");
 }
@@ -373,6 +377,47 @@ void Case20(SuppliesManage &s) {
 
 void Case21(SuppliesManage &s) {
     s.showKOSups();
+    int currentY = Functions::getY();
+    Functions::gotoxy(75, currentY + 2);
+    cout << "Thao tac thanh cong!!";
+    Functions::gotoxy(75, currentY + 4);
+    system("pause");
+    system("cls");
+}
+
+void Case22(SuppliesManage &s) {
+    s.editSup();
+    s.getStorage().updateStorage();
+    int currentY = Functions::getY();
+    Functions::gotoxy(75, currentY + 2);
+    cout << "Thao tac thanh cong!!";
+    Functions::gotoxy(75, currentY + 4);
+    system("pause");
+    system("cls");
+}
+
+void Case23(SuppliesManage &s) {
+    s.editUnit();
+    int currentY = Functions::getY();
+    Functions::gotoxy(75, currentY + 2);
+    cout << "Thao tac thanh cong!!";
+    Functions::gotoxy(75, currentY + 4);
+    system("pause");
+    system("cls");
+}
+
+void Case24(SuppliesManage &s) {
+    s.editManufacturer();
+    int currentY = Functions::getY();
+    Functions::gotoxy(75, currentY + 2);
+    cout << "Thao tac thanh cong!!";
+    Functions::gotoxy(75, currentY + 4);
+    system("pause");
+    system("cls");
+}
+
+void Case25(SuppliesManage &s) {
+    s.editKOsup();
     int currentY = Functions::getY();
     Functions::gotoxy(75, currentY + 2);
     cout << "Thao tac thanh cong!!";
@@ -532,6 +577,41 @@ void Case5(SuppliesManage &s)
             Case20(s);
             break;
         case 7:
+            break;
+    }
+};
+
+void Case26(SuppliesManage &s) 
+{
+    Functions::gotoxy(5, 29); cout << "6.1. Thay doi thong tin vat tu";
+    Functions::gotoxy(5, 31); cout << "6.2. Thay doi ten don vi";
+    Functions::gotoxy(5, 33); cout << "6.3. Thay doi ten nha san xuat";
+    Functions::gotoxy(5, 35); cout << "6.4. Thay doi ten loai vat tu";
+    Functions::gotoxy(5, 37); cout << "6.5. Tro lai Menu";
+    int choice;
+    Functions::setcolor(2);
+    Functions::gotoxy(5, 50); cout << "                                               ";
+    Functions::gotoxy(5, 50); cout << "Nhap lua chon cua ban: ";
+    cin >> choice;
+    while(choice < 1 || choice > 5)
+    {   
+        Functions::gotoxy(5, 50); cout << "                                               ";
+        Functions::gotoxy(5, 50); cout << "Nhap lua chon cua ban: "; cin >> choice;
+    }
+    switch(choice) {
+        case 1:
+            Case22(s);
+            break;
+        case 2:
+            Case23(s);
+            break;
+        case 3:
+            Case24(s);
+            break;
+        case 4:
+            Case25(s);
+            break;
+        case 5:
             break;
     }
 };
